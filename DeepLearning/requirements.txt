@@ -1,0 +1,7 @@
+tensorflow
+tqdm
+pandas
+numpy
+jupyter
+matplotlib
+graphviz
