@@ -6,3 +6,6 @@ tqdm
 pandas
 numpy
 scipy
+seaborn
+scikit-learn
+gdown
