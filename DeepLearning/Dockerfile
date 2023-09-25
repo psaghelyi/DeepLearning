@@ -1,7 +1,7 @@
 FROM pytorch/pytorch:latest
 
 RUN apt-get update && \
-    apt-get install -y graphviz htop atop git && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y git htop atop graphviz && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
