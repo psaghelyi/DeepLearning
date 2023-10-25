@@ -1,5 +1,6 @@
-jupyter
+notebook
 matplotlib
+torchsummary
 graphviz
 tensorflow
 tqdm
@@ -8,4 +9,5 @@ numpy
 scipy
 seaborn
 scikit-learn
+opencv-python
 gdown

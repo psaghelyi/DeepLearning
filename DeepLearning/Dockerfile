@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:latest
+FROM pytorch/pytorch
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y git htop atop graphviz && \
@@ -7,9 +7,9 @@ RUN apt-get update && \
 
 RUN pip install --upgrade pip
 
-COPY . /workspace
-
 WORKDIR /workspace
+
+COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 

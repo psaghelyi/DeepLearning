@@ -29,7 +29,8 @@
 				"ms-toolsai.vscode-jupyter-slideshow",
 				"ms-toolsai.vscode-jupyter-powertoys",
 				"mechatroner.rainbow-csv",
-				"ms-azuretools.vscode-docker"
+				"ms-azuretools.vscode-docker",
+				"analytic-signal.preview-tiff"
 			]
 		}
 	}
