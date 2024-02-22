@@ -1,8 +1,11 @@
 notebook
 matplotlib
+torch
+torchvision
 torchsummary
 graphviz
 tensorflow
+tensorboard
 tqdm
 pandas
 numpy
@@ -11,3 +14,4 @@ seaborn
 scikit-learn
 opencv-python
 gdown
+sagemaker

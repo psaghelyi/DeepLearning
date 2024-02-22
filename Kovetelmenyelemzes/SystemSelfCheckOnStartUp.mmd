@@ -1,0 +1,10 @@
+sequenceDiagram
+    participant CPU as Central Processing Unit
+    participant S as Sensors
+    participant BCS as Brake Check System
+    participant Log as Logging System
+
+    CPU->>S: Initiate Self-Check
+    S->>BCS: Sensor Status
+    BCS->>CPU: System Readiness
+    CPU->>Log: Log System Status

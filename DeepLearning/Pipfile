@@ -1,0 +1,25 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+notebook = "*"
+matplotlib = "*"
+torch = "*"
+torchvision = "*"
+torchsummary = "*"
+graphviz = "*"
+tqdm = "*"
+pandas = "*"
+numpy = "*"
+scipy = "*"
+seaborn = "*"
+scikit-learn = "*"
+opencv-python = "*"
+gdown = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "DeepLearning"

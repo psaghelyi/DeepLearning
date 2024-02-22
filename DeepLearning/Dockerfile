@@ -1,7 +1,7 @@
 FROM pytorch/pytorch
 
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y git htop atop graphviz && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y git htop atop graphviz libgl1-mesa-glx && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

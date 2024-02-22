@@ -1,0 +1,14 @@
+sequenceDiagram
+    participant S as Sensors
+    participant CPU as Central Processing Unit
+    participant BCS as Brake Check System
+    participant Brakes
+    participant Notif as Notification System
+    participant Log as Logging System
+
+    S->>CPU: Detect Obstacle
+    CPU->>BCS: Assess Collision Risk
+    BCS->>Brakes: Calculate Brake Force
+    Brakes->>BCS: Apply Brakes
+    BCS->>Notif: Send Alert to Driver
+    BCS-->>Log: Log Braking Event
