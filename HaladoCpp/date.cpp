@@ -10,18 +10,18 @@ Date Date::create(int year, int month, int day) {
 }
 
 void Date::validate() const {
-    if (this->year < 1970 || this->year > 2038) {
+    if (getYear() < 1970 || getYear() > 2038) {
         throw bad_date("Year must be between 1970 and 2038.");
     }
-    if (this->month < 1 || this->month > 12) {
+    if (getMonth() < 1 || getMonth() > 12) {
         throw bad_date("Month must be between 1 and 12.");
     }
     int daysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     // Adjust for leap year
-    if (this->month == 2 && ((this->year % 4 == 0 && this->year % 100 != 0) || this->year % 400 == 0)) {
+    if (getMonth() == 2 && ((getYear() % 4 == 0 && getYear() % 100 != 0) || getYear() % 400 == 0)) {
         daysInMonth[1] = 29;
     }
-    if (this->day < 1 || this->day > daysInMonth[month - 1]) {
+    if (getDay() < 1 || getDay() > daysInMonth[getMonth() - 1]) {
         throw bad_date("Invalid day for the given month and year.");
     }
 }
@@ -29,7 +29,7 @@ void Date::validate() const {
 bool Date::isValid() const {
     try 
     {
-        this->validate();
+        validate();
     } catch (const bad_date& e) {
         return false;
     } catch (...) {
@@ -49,12 +49,12 @@ Date Date::randomDate(const Date &start, const Date &end) {
     {
         // sajnos muszáj foglalkozni az intervallum két végén lévő dátumokkal is
         // ezeken a helyeken nem lehet az összes hónap összes napját választani
-        int year = start.year + std::rand() % (end.year - start.year + 1);
-        int startMonth = (start.year == year ? start.month : 1);
-        int endMonth = (end.year == year ? end.month : 12);
+        int year = start.getYear() + std::rand() % (end.getYear() - start.getYear() + 1);
+        int startMonth = (start.getYear() == year ? start.getMonth() : 1);
+        int endMonth = (end.getYear() == year ? end.getMonth() : 12);
         int month = startMonth + std::rand() % (endMonth - startMonth + 1);
-        int startDay = (start.year == year && start.month == month ? start.day : 1);
-        int endDay = (end.year == year && end.month == month ? end.day : 31);
+        int startDay = (start.getYear() == year && start.getMonth() == month ? start.getDay() : 1);
+        int endDay = (end.getYear() == year && end.getMonth() == month ? end.getDay() : 31);
         int day = startDay + std::rand() % (endDay - startDay + 1);
         
         Date date(year, month, day);

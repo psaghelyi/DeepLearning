@@ -19,57 +19,30 @@ public:
     static Date randomDate(const Date &start, const Date &end);
     bool isValid() const;
 
-    Date(int year, int month, int day) : year(year), month(month), day(day) {}
+    Date(int year, int month, int day) : data(year, month, day) { }
 
     // Function to get the year part of the date
-    int getYear() const { return this->year; }
-    int getMonth() const { return this->month; }
-    int getDay() const { return this->day; }
+    int getYear() const { return std::get<0>(data); }
+    int getMonth() const { return std::get<1>(data); }
+    int getDay() const { return std::get<2>(data); }
 
     operator bool() const { return isValid(); }
 
-    bool operator<(const Date& other) const 
-    { 
-        return std::tie(this->year, this->month, this->day) < 
-                std::tie(other.year, other.month, other.day);
-    }
-    
-    bool operator==(const Date& other) const 
-    { 
-        return std::tie(this->year, this->month, this->day) == 
-                std::tie(other.year, other.month, other.day);
-    }
-    
-    bool operator>(const Date& other) const 
-    {
-        return !(*this < other || *this == other);
-    }
-    
-    bool operator<=(const Date& other) const 
-    {
-        return *this < other || *this == other;
-    }
-
-    bool operator>=(const Date& other) const 
-    {
-        return !(*this < other);
-    }
-    
-    bool operator!=(const Date& other) const 
-    {
-        return !(*this == other);
-    }
+    bool operator<(const Date& other) const { return data < other.data; }
+    bool operator==(const Date& other) const { return data == other.data; }
+    bool operator>(const Date& other) const { return !(*this < other || *this == other); }    
+    bool operator<=(const Date& other) const { return *this < other || *this == other; }
+    bool operator>=(const Date& other) const { return !(*this < other); }
+    bool operator!=(const Date& other) const { return !(*this == other); }
 
     friend std::ostream& operator<<(std::ostream& os, const Date& date) {
         os << date.getYear() << " " << date.getMonth() << " " << date.getDay();
         return os;
     }
-    
 
 private:
-    int year;
-    int month;
-    int day;
+    // a dátumot egy tupple-ben tároljuk a sok összehasonlítás miatt
+    std::tuple<int, int, int> data;
     void validate() const;
 };
 
