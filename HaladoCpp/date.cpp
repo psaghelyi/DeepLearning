@@ -1,69 +1,79 @@
 #include "date.hpp"
 
-
-// Custom exception for invalid dates
-bad_date::bad_date(const std::string& message) : std::runtime_error(message) {}
+#include <sstream>
 
 
 Date Date::create(int year, int month, int day) {
-    if (year < 1970 || year > 2038) {
+        Date date(year, month, day);
+        return date;
+}
+
+Date::operator std::string() const
+{
+    std::ostringstream oss;
+    oss << this->year << "-" << this->month << "-" << this->day;
+    return oss.str();
+}
+
+void Date::validate() const {
+    if (this->year < 1970 || this->year > 2038) {
         throw bad_date("Year must be between 1970 and 2038.");
     }
-    if (month < 1 || month > 12) {
+    if (this->month < 1 || this->month > 12) {
         throw bad_date("Month must be between 1 and 12.");
     }
     int daysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     // Adjust for leap year
-    if (month == 2 && ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)) {
+    if (this->month == 2 && ((this->year % 4 == 0 && this->year % 100 != 0) || this->year % 400 == 0)) {
         daysInMonth[1] = 29;
     }
-    if (day < 1 || day > daysInMonth[month - 1]) {
+    if (this->day < 1 || this->day > daysInMonth[month - 1]) {
         throw bad_date("Invalid day for the given month and year.");
     }
-    
-    return Date(year, month, day); // Use private constructor
 }
 
 bool Date::isValid() const {
     try 
     {
-        Date::create(this->getYear(), this->getMonth(), this->getDay());
+        this->validate();
     } catch (const bad_date& e) {
         return false;
+    } catch (...) {
+        throw;
     }
     return true;
 }
 
-Date::Date(int year, int month, int day) {
-    struct tm date = {}; // Initialize to all zero
 
-    date.tm_year = year - 1900; // tm_year is year since 1900
-    date.tm_mon = month - 1; // tm_mon is 0-based
-    date.tm_mday = day;
+// Egy véletlen dátum generálása a megadott intervallumban
+Date Date::randomDate(const Date &start, const Date &end) {
+    #ifdef DEBUG
+    std::vector<std::string> dates(MAX_TRY_RANDOM);
+#endif
 
-    // convert to epoch time
-    epochTime = mktime(&date);
+    for (int i = 0; i < MAX_TRY_RANDOM; ++i) {
+        int year = 1970 + std::rand() % (2038 - 1970 + 1);
+        int month = 1 + std::rand() % 12;
+        int day = 1 + std::rand() % 31;
+
+        Date date = Date::create(year, month, day);
+        
+#ifdef DEBUG
+        dates.push_back(date);
+#endif
+
+        if (date.isValid()) {
+            return date;
+        }
+    }
+
+#ifdef DEBUG
+    std::cerr << "Failed to generate a valid random date. Tried the following dates: ";
+    for (std::vector<std::string>::const_iterator it = dates.begin(); it != dates.end(); ++it) {
+        std::cerr << *it << " ";
+    }
+    std::cerr << std::endl;
+#endif
+
+    throw terrible_random("Failed to generate a valid random date.");
 }
-
-// Function to get the year part of the date
-int Date::getYear() const {
-    struct tm *date = localtime(&epochTime);
-    return date->tm_year + 1900; // Convert back to calendar year
-}
-
-// Function to get the month part of the date
-int Date::getMonth() const {
-    struct tm *date = localtime(&epochTime);
-    return date->tm_mon + 1; // Convert back to 1-based month
-}
-
-// Function to get the day part of the date
-int Date::getDay() const {
-    struct tm *date = localtime(&epochTime);
-    return date->tm_mday;
-}
-
-Date::operator bool() const {
-    return isValid();
-}
-

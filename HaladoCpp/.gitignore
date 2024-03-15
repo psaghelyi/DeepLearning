@@ -1,0 +1,55 @@
+# Object files
+*.o
+*.obj
+*.a
+*.lib
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# DLLs and Shared Libraries
+*.so
+*.dylib
+*.dll
+
+# Executables and Application Bundles
+*.exe
+*.out
+*.app
+
+# Build folders
+build/
+Release/
+Debug/
+bin/
+obj/
+lib/
+
+# Temporary files
+*.temp
+*.tmp
+
+# Clang/LLVM Coverage and Sanitizer outputs
+*.gcda
+*.gcno
+*.gcov
+coverage/
+*.san.*
+
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.cmake
+
+# Other IDEs and editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# MacOS specific
+.DS_Store

@@ -1,7 +1,7 @@
 # Compiler settings
 CXX = g++
 CXXFLAGS = -Wall
-DEBUGFLAGS = -g
+DEBUGFLAGS = -g -DDEBUG
 OPTFLAGS = -O3
 
 # Find all cpp files in the current directory

@@ -1,16 +1,57 @@
 #include <iostream>
+#include <fstream>
 #include <string>
-#include <stdexcept>
-#include <ctime>
+#include <vector>
+#include <cstdlib> // std::rand, std::srand
+#include <ctime>   // std::time
+
 
 #include "date.hpp"
+#include "stopper.hpp"
 
-int main () {
-    try {
-        Date date = Date::create(1990, 11, 30); // Example of a valid date
-        std::cout << date.getYear() << "-" << date.getMonth() << "-" << date.getDay() << std::endl;
-    } catch (const bad_date& e) {
-        std::cerr << "Exception caught: " << e.what() << std::endl;
+
+int main(int argc, char* argv[]) {
+    if (argc < 3 || argc > 4) {
+        std::cerr << "Helytelen számú argumentum. Használat: <program> N K [fájlnév/-]" << std::endl;
+        return 1; // Hiba státusz
     }
+
+    int N = std::stoi(argv[1]);
+    int K = std::stoi(argv[2]);
+    std::ostream* output;
+    std::ofstream file;
+    if (argc == 4 && std::string(argv[3]) != "-") {
+        file.open(argv[3]);
+        if (!file) {
+            std::cerr << "Nem sikerült megnyitni a fájlt írásra: " << argv[3] << std::endl;
+            return 1;
+        }
+        output = &file;
+    } else {
+        output = &std::cout;
+    }
+
+    std::srand(std::time(nullptr)); // Véletlenszám-generátor inicializálása
+    static const Date start(1970, 1, 1);
+    static const Date end(2038, 12, 31);
+
+    try {
+        *output << N << '\n' << K << '\n';
+        measureExecutionTime("Véletlen dátumok generálása", [N, K, &output]() {
+            for (int i = 0; i < N + K; ++i) {
+                Date date = Date::randomDate(start, end);
+                *output << date.getYear() << ' ' << date.getMonth() << ' ' << date.getDay() << '\n';
+            }
+        });
+    } catch (const terrible_random& e) {
+        std::cerr << "Hiba: " << e.what() << std::endl;
+        return 1;
+    }
+
+    // close the file handle if it was a phiysical file
+    if (argc == 4 && std::string(argv[3]) != "-") {
+        file.close();
+    }
+
     return 0;
 }
