@@ -1,7 +1,3 @@
-// template class to hold date information in year, month, day format
-// the internal representation is a single integer (unix epoch)
-
-
 #ifndef DATE_HPP
 #define DATE_HPP
 
@@ -10,6 +6,7 @@
 #include <vector>
 #include <stdexcept>
 #include <ctime>
+#include <tuple>
 
 #include "exceptions.hpp"
 
@@ -30,7 +27,44 @@ public:
     int getDay() const { return this->day; }
 
     operator bool() const { return isValid(); }
-    operator std::string() const;
+
+    bool operator<(const Date& other) const 
+    { 
+        return std::tie(this->year, this->month, this->day) < 
+                std::tie(other.year, other.month, other.day);
+    }
+    
+    bool operator==(const Date& other) const 
+    { 
+        return std::tie(this->year, this->month, this->day) == 
+                std::tie(other.year, other.month, other.day);
+    }
+    
+    bool operator>(const Date& other) const 
+    {
+        return !(*this < other || *this == other);
+    }
+    
+    bool operator<=(const Date& other) const 
+    {
+        return *this < other || *this == other;
+    }
+
+    bool operator>=(const Date& other) const 
+    {
+        return !(*this < other);
+    }
+    
+    bool operator!=(const Date& other) const 
+    {
+        return !(*this == other);
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Date& date) {
+        os << date.getYear() << " " << date.getMonth() << " " << date.getDay();
+        return os;
+    }
+    
 
 private:
     int year;

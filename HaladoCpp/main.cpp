@@ -32,15 +32,15 @@ int main(int argc, char* argv[]) {
     }
 
     std::srand(std::time(nullptr)); // Véletlenszám-generátor inicializálása
-    static const Date start(1970, 1, 1);
-    static const Date end(2038, 12, 31);
+    static const Date start(2019, 5, 15);
+    static const Date end(2022, 10, 3);
 
     try {
         *output << N << '\n' << K << '\n';
         measureExecutionTime("Véletlen dátumok generálása", [N, K, &output]() {
             for (int i = 0; i < N + K; ++i) {
                 Date date = Date::randomDate(start, end);
-                *output << date.getYear() << ' ' << date.getMonth() << ' ' << date.getDay() << '\n';
+                *output << date << std::endl;
             }
         });
     } catch (const terrible_random& e) {

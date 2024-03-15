@@ -53,3 +53,5 @@ Makefile
 
 # MacOS specific
 .DS_Store
+
+app

@@ -4,15 +4,9 @@
 
 
 Date Date::create(int year, int month, int day) {
-        Date date(year, month, day);
-        return date;
-}
-
-Date::operator std::string() const
-{
-    std::ostringstream oss;
-    oss << this->year << "-" << this->month << "-" << this->day;
-    return oss.str();
+    Date date(year, month, day);
+    date.validate();
+    return date;
 }
 
 void Date::validate() const {
@@ -45,32 +39,40 @@ bool Date::isValid() const {
 }
 
 
-// Egy véletlen dátum generálása a megadott intervallumban
+// Egy véletlen dátum generálása a megadott intervallumban (egyenlőség is megengedett)
 Date Date::randomDate(const Date &start, const Date &end) {
     #ifdef DEBUG
     std::vector<std::string> dates(MAX_TRY_RANDOM);
 #endif
 
-    for (int i = 0; i < MAX_TRY_RANDOM; ++i) {
-        int year = 1970 + std::rand() % (2038 - 1970 + 1);
-        int month = 1 + std::rand() % 12;
-        int day = 1 + std::rand() % 31;
-
-        Date date = Date::create(year, month, day);
+    for (int i = 0; i < MAX_TRY_RANDOM; ++i) 
+    {
+        // sajnos muszáj foglalkozni az intervallum két végén lévő dátumokkal is
+        // ezeken a helyeken nem lehet az összes hónap összes napját választani
+        int year = start.year + std::rand() % (end.year - start.year + 1);
+        int startMonth = (start.year == year ? start.month : 1);
+        int endMonth = (end.year == year ? end.month : 12);
+        int month = startMonth + std::rand() % (endMonth - startMonth + 1);
+        int startDay = (start.year == year && start.month == month ? start.day : 1);
+        int endDay = (end.year == year && end.month == month ? end.day : 31);
+        int day = startDay + std::rand() % (endDay - startDay + 1);
         
-#ifdef DEBUG
-        dates.push_back(date);
-#endif
-
+        Date date(year, month, day);
         if (date.isValid()) {
             return date;
         }
+        
+#ifdef DEBUG
+        std::ostringstream oss;
+        oss << date;
+        dates.push_back(oss.str());
+#endif
     }
 
 #ifdef DEBUG
     std::cerr << "Failed to generate a valid random date. Tried the following dates: ";
     for (std::vector<std::string>::const_iterator it = dates.begin(); it != dates.end(); ++it) {
-        std::cerr << *it << " ";
+        std::cerr << *it << std::endl;
     }
     std::cerr << std::endl;
 #endif
