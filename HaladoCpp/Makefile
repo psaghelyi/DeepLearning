@@ -1,6 +1,6 @@
-# Compiler settings
+# Compiler settings - default to g++
 CXX = g++
-CXXFLAGS = -Wall
+CXXFLAGS = -Wall -std=c++17
 DEBUGFLAGS = -g -DDEBUG
 OPTFLAGS = -O3
 
@@ -12,13 +12,24 @@ OBJECTS = $(SOURCES:.cpp=.o)
 # Name of the executable
 EXECUTABLE = app
 
+# Check for target postfix
+ifneq (,$(findstring -llvm,$(MAKECMDGOALS)))
+  CXX = clang++
+endif
+
 # Default target
 all: CXXFLAGS += $(DEBUGFLAGS)
 all: $(EXECUTABLE)
 
+# LLVM version of the default target
+all-llvm: all
+
 # Production target with maximum optimization
 prod: CXXFLAGS += $(OPTFLAGS)
 prod: $(EXECUTABLE)
+
+# LLVM version of the production target
+prod-llvm: prod
 
 $(EXECUTABLE): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
