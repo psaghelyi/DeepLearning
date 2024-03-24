@@ -9,6 +9,8 @@
 #include "date.hpp"
 #include "stopper.hpp"
 
+#define MEASURE_EXECUTION_TIME 1
+
 
 int main(int argc, char* argv[]) {
     if (argc < 3 || argc > 4) {
@@ -32,12 +34,14 @@ int main(int argc, char* argv[]) {
     }
 
     std::srand(std::time(nullptr)); // Véletlenszám-generátor inicializálása
-    static const Date start(2019, 5, 15);
-    static const Date end(2022, 10, 3);
+    static const Date start(1976, 6, 4);
+    static const Date end(2023, 4, 16);
 
     try {
         *output << N << '\n' << K << '\n';
-        measureExecutionTime("Véletlen dátumok generálása", [N, K, &output]() {
+        // gondoltam kipróbálom az időmérési függvényemet is
+        measureExecutionTime("Véletlen dátumok generálása", [N, K, &output]() 
+        {
             for (int i = 0; i < N + K; ++i) {
                 Date date = Date::randomDate(start, end);
                 *output << date << std::endl;
@@ -48,8 +52,8 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // close the file handle if it was a phiysical file
-    if (argc == 4 && std::string(argv[3]) != "-") {
+    // close the file handle if it was a physical file
+    if (output == &file) {
         file.close();
     }
 

@@ -4,13 +4,13 @@ CXXFLAGS = -Wall -std=c++17
 DEBUGFLAGS = -g -DDEBUG
 OPTFLAGS = -O3
 
-# Find all cpp files in the current directory
-SOURCES = $(wildcard *.cpp)
-# Replace .cpp extension with .o for object files
-OBJECTS = $(SOURCES:.cpp=.o)
+COMMON_OBJECTS = date.o
 
-# Name of the executable
-EXECUTABLE = app
+PRODUCER_OBJECTS = $(COMMON_OBJECTS) producer.o
+PRODUCER_EXEC = producer
+
+CONSUMER_OBJECTS = $(COMMON_OBJECTS) consumer.o
+CONSUMER_EXEC = consumer
 
 # Check for target postfix
 ifneq (,$(findstring -llvm,$(MAKECMDGOALS)))
@@ -19,19 +19,22 @@ endif
 
 # Default target
 all: CXXFLAGS += $(DEBUGFLAGS)
-all: $(EXECUTABLE)
+all: $(PRODUCER_EXEC) $(CONSUMER_EXEC)
 
 # LLVM version of the default target
 all-llvm: all
 
 # Production target with maximum optimization
 prod: CXXFLAGS += $(OPTFLAGS)
-prod: $(EXECUTABLE)
+prod: $(PRODUCER_EXEC) $(CONSUMER_EXEC)
 
 # LLVM version of the production target
 prod-llvm: prod
 
-$(EXECUTABLE): $(OBJECTS)
+$(PRODUCER_EXEC): $(PRODUCER_OBJECTS)
+	$(CXX) $(CXXFLAGS) -o $@ $^
+
+$(CONSUMER_EXEC): $(CONSUMER_OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
 # Rule to create object files
@@ -39,4 +42,4 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJECTS) $(EXECUTABLE)
+	rm -f $(PRODUCER_OBJECTS) $(CONSUMER_OBJECTS) $(PRODUCER_EXEC) $(CONSUMER_EXEC)
