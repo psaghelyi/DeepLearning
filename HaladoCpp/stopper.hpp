@@ -11,6 +11,8 @@ measureExecutionTime("Példa feladat", []() {
     }
 */
 
+#ifdef MEASURE_EXECUTION_TIME
+
 template<typename Func>
 void measureExecutionTime(const std::string& taskName, Func task) {
     using namespace std::chrono;
@@ -30,5 +32,14 @@ void measureExecutionTime(const std::string& taskName, Func task) {
     auto duration = duration_cast<microseconds>(end - start).count();
     std::cerr << "A végrehajtásra eltöltött idő: " << duration << " mikroszekundum." << std::endl;
 }
+
+#else
+
+template<typename Func>
+void measureExecutionTime(const std::string& taskName, Func task) {
+    task();
+}
+
+#endif
 
 #endif

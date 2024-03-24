@@ -5,12 +5,10 @@
 #include <cstdlib> // std::rand, std::srand
 #include <ctime>   // std::time
 
+// #define MEASURE_EXECUTION_TIME 1
 
 #include "date.hpp"
 #include "stopper.hpp"
-
-#define MEASURE_EXECUTION_TIME 1
-
 
 int main(int argc, char* argv[]) {
     if (argc < 3 || argc > 4) {
