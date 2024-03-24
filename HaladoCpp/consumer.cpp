@@ -1,29 +1,21 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
+#include "consumer.hpp"
 
-#include "avl_tree.hpp"
+int consumer(Date const &date)
+{
+    static Date previousDate(-1, -1, -1);
+    Date _date = previousDate;
+    previousDate = date;
 
-int main(int argc, char* argv[]) {
-    AVLTree<int> tree;
-
-    // Insert elements
-    tree.root = tree.insert(tree.root, 10);
-    tree.root = tree.insert(tree.root, 20);
-    tree.root = tree.insert(tree.root, 5);
-    tree.root = tree.insert(tree.root, 4);
-    tree.root = tree.insert(tree.root, 6);
-
-    // Traverse the teree by always getting the smallest element
-    while (tree.root != nullptr) {
-        AVLNode<int>* smallest = tree.minValueNode(tree.root);
-        std::cout << "The smallest element is: " << smallest->key << std::endl;
-
-        // "Soft delete" the smallest element
-        tree.root = tree.deleteNode(tree.root, smallest->key);
-        std::cout << "Smallest element removed." << std::endl;
+    if (_date.getYear() == -1) {
+        return 42;
     }
-
+    if (date < _date) {
+        return -1;
+    }
+    if (date > _date) {
+        return 1;
+    }
     return 0;
-};
+}
+
+ConsumerFunction consumerFunction = consumer;

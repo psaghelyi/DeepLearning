@@ -49,6 +49,7 @@ Date Date::randomDate(const Date &start, const Date &end) {
     {
         // sajnos muszáj foglalkozni az intervallum két végén lévő dátumokkal is
         // ezeken a helyeken nem lehet az összes hónap összes napját választani
+        
         int year = start.getYear() + std::rand() % (end.getYear() - start.getYear() + 1);
         int startMonth = (start.getYear() == year ? start.getMonth() : 1);
         int endMonth = (end.getYear() == year ? end.getMonth() : 12);

@@ -5,11 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(lldb) Launch Producer",
+            "name": "(lldb) Launch Generator",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/producer",
-            "args": ["1", "500", "random-dates"],
+            "program": "${workspaceFolder}/generator",
+            "args": ["10", "500", "dates.txt"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
@@ -18,11 +18,11 @@
             "preLaunchTask": "build"
         },
         {
-            "name": "(lldb) Launch Consumer",
+            "name": "(lldb) Launch App",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/consumer",
-            //"args": ["1", "500", "random-dates"],
+            "program": "${workspaceFolder}/app",
+            "args": ["dates.txt"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],

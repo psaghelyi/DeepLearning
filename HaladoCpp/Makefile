@@ -6,11 +6,11 @@ OPTFLAGS = -O3
 
 COMMON_OBJECTS = date.o
 
-PRODUCER_OBJECTS = $(COMMON_OBJECTS) producer.o
-PRODUCER_EXEC = producer
+GENERATOR_OBJECTS = $(COMMON_OBJECTS) generator.o
+GENERATOR_EXEC = generator
 
-CONSUMER_OBJECTS = $(COMMON_OBJECTS) consumer.o
-CONSUMER_EXEC = consumer
+MAIN_OBJECTS = $(COMMON_OBJECTS) consumer.o main.o
+MAIN_EXEC = app
 
 # Check for target postfix
 ifneq (,$(findstring -llvm,$(MAKECMDGOALS)))
@@ -19,22 +19,22 @@ endif
 
 # Default target
 all: CXXFLAGS += $(DEBUGFLAGS)
-all: $(PRODUCER_EXEC) $(CONSUMER_EXEC)
+all: $(GENERATOR_EXEC) $(MAIN_EXEC)
 
 # LLVM version of the default target
 all-llvm: all
 
 # Production target with maximum optimization
 prod: CXXFLAGS += $(OPTFLAGS)
-prod: $(PRODUCER_EXEC) $(CONSUMER_EXEC)
+prod: $(GENERATOR_EXEC) $(MAIN_EXEC)
 
 # LLVM version of the production target
 prod-llvm: prod
 
-$(PRODUCER_EXEC): $(PRODUCER_OBJECTS)
+$(GENERATOR_EXEC): $(GENERATOR_OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
-$(CONSUMER_EXEC): $(CONSUMER_OBJECTS)
+$(MAIN_EXEC): $(MAIN_OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
 # Rule to create object files
@@ -42,4 +42,8 @@ $(CONSUMER_EXEC): $(CONSUMER_OBJECTS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(PRODUCER_OBJECTS) $(CONSUMER_OBJECTS) $(PRODUCER_EXEC) $(CONSUMER_EXEC)
+	rm -f $(GENERATOR_OBJECTS) $(MAIN_OBJECTS) $(GENERATOR_EXEC) $(MAIN_EXEC)
+
+run: prod
+	./$(GENERATOR_EXEC) 500 10000 dates.txt
+	./$(MAIN_EXEC) dates.txt

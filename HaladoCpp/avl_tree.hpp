@@ -64,8 +64,21 @@ public:
         return height(N->left) - height(N->right);
     }
 
-    AVLNode<T>* maintainBalance(AVLNode<T>* node, T key) {
-        /* Magasság frissítése az ősben */
+
+    AVLNode<T>* insertNode(AVLNode<T>* node, T key) {
+        /* 1. nulladik elem az üres fában */
+        if (node == nullptr)
+            return(new AVLNode<T>(key));
+
+        if (key < node->key)
+            node->left = insertNode(node->left, key);
+        else if (key > node->key)
+            node->right = insertNode(node->right, key);
+        else // nem lehet két egyforma elem egy BST-ben
+            return node;
+
+        /* 2. Ha szükséges, akkor kiegyensúlyozunk */
+                /* Magasság frissítése az ősben */
         node->height = 1 + max(height(node->left), height(node->right));
 
         /* Ellenőrizzük, hogy szükséges-e kiegyensúlyozni */
@@ -97,69 +110,75 @@ public:
         return node;
     }
 
-    AVLNode<T>* insert(AVLNode<T>* node, T key) {
-        /* 1. nulladik elem az üres fában */
-        if (node == nullptr)
-            return(new AVLNode<T>(key));
 
-        if (key < node->key)
-            node->left = insert(node->left, key);
-        else if (key > node->key)
-            node->right = insert(node->right, key);
-        else // nem lehet két egyforma elem egy BST-ben
-            return node;
+    AVLNode<T>* deleteNode(AVLNode<T>* root, T key) {
+        // Step 1: üres fa
+        if (root == nullptr)
+            return root;
 
-        /* 2. Ha szükséges, akkor kiegyensúlyozunk */
-        return maintainBalance(node, key);
-    }
-
-    // Helper function to delete a node with a given key
-    AVLNode<T>* deleteNode(AVLNode<T>* node, T key) {
-        /* 1. Üres fa esetén visszatérünk */
-        if (node == nullptr)
-            return node;
-
-        if (key < node->key)
-            node->left = deleteNode(node->left, key);
-        else if (key > node->key)
-            node->right = deleteNode(node->right, key);
+        if (key < root->key)
+            root->left = deleteNode(root->left, key);
+        else if (key > root->key)
+            root->right = deleteNode(root->right, key);
         else {
-            // egy vagy nulla gyerek
-            if ((node->left == nullptr) || (node->right == nullptr)) {
-                AVLNode<T>* temp = node->left ? node->left : node->right;
+            // egy gyerek vagy semmi
+            if ((root->left == nullptr) || (root->right == nullptr)) {
+                AVLNode<T>* temp = root->left ? root->left : root->right;
 
-                // nulla gyerek
+                // nincs gyerek
                 if (temp == nullptr) {
-                    temp = node;
-                    node = nullptr;
+                    temp = root;
+                    root = nullptr;
                 }
                 else // egy gyerek
-                    *node = *temp; // másoljuk a nem üres gyerek tartalmát
+                    *root = *temp;
                 delete temp;
             }
             else {
-                // két gyerek: keressük az utódot (a jobb részfában a legkisebb)
-                AVLNode<T>* temp = minValueNode(node->right);
+                // két gyerek: az utód megtalálása (a jobb részfában a legkisebb elem)
+                AVLNode<T>* temp = minValueNode(root->right);
 
-                // másoljuk az utód adatait erre a csúcsra
-                node->key = temp->key;
+                root->key = temp->key;
 
-                // töröljük az inorder utódot
-                node->right = deleteNode(node->right, temp->key);
+                // az utód törlése
+                root->right = deleteNode(root->right, temp->key);
             }
         }
 
-        // ha csak egy csúcs volt a fában akkor visszatérünk
-        if (node == nullptr)
-            return node;
+        // ha csak egy elem volt a fában
+        if (root == nullptr)
+            return root;
 
-        /* 2. Ha szükséges, akkor kiegyensúlyozunk */
-        return maintainBalance(node, key);
+        // Step 2: magasság frissítése
+        root->height = 1 + max(height(root->left), height(root->right));
+
+        // Step 3: kell-e kiegyensúlyozni?
+        int balance = getBalance(root);
+
+        // bal bal eset
+        if (balance > 1 && getBalance(root->left) >= 0)
+            return rightRotate(root);
+
+        // bal jobb eset
+        if (balance > 1 && getBalance(root->left) < 0) {
+            root->left = leftRotate(root->left);
+            return rightRotate(root);
+        }
+
+        // jobb jobb eset
+        if (balance < -1 && getBalance(root->right) <= 0)
+            return leftRotate(root);
+
+        // jobb bal eset
+        if (balance < -1 && getBalance(root->right) > 0) {
+            root->right = rightRotate(root->right);
+            return leftRotate(root);
+        }
+
+        return root;
     }
 
 
-    // Utility function to get the node with
-    // the smallest key value found in that tree
     AVLNode<T>* minValueNode(AVLNode<T>* node) {
         AVLNode<T>* current = node;
 
@@ -171,5 +190,6 @@ public:
     }
 
 };
+
 
 #endif

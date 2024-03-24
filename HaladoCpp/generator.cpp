@@ -32,17 +32,20 @@ int main(int argc, char* argv[]) {
     }
 
     std::srand(std::time(nullptr)); // Véletlenszám-generátor inicializálása
-    static const Date start(1976, 6, 4);
-    static const Date end(2023, 4, 16);
+    static const Date start(1970, 1, 1);
+    static const Date end(2038, 1, 19);
 
     try {
         *output << N << '\n' << K << '\n';
         // gondoltam kipróbálom az időmérési függvényemet is
         measureExecutionTime("Véletlen dátumok generálása", [N, K, &output]() 
         {
-            for (int i = 0; i < N + K; ++i) {
+            for (uint64_t i = 0; i < N + K; ++i) {
                 Date date = Date::randomDate(start, end);
                 *output << date << std::endl;
+                if (i % 1000000LL == 0) {
+                    std::cerr << "Generált dátumok száma: " << i << std::endl;
+                }
             }
         });
     } catch (const terrible_random& e) {

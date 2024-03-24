@@ -54,5 +54,6 @@ Makefile
 # MacOS specific
 .DS_Store
 
-consumer
-producer
+generator
+app
+dates.txt

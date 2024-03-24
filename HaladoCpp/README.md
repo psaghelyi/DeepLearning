@@ -15,4 +15,5 @@
 
 ## Running the App
 
-`$ ./app <K> <M> <filename>` - Run the app to generate K + M number of random dates and write them to the file
+`$ make run`
+
