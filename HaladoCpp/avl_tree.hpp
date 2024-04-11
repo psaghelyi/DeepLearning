@@ -6,9 +6,10 @@ class AVLNode {
 public:
     T key;
     int height;
+    uint64_t count;
     AVLNode *left, *right;
 
-    AVLNode(T d) : key(d), height(1), left(nullptr), right(nullptr) {}
+    AVLNode(T d) : key(d), height(1), count(1), left(nullptr), right(nullptr) {}
 };
 
 template <typename T>
@@ -75,7 +76,10 @@ public:
         else if (key > node->key)
             node->right = insertNode(node->right, key);
         else // nem lehet két egyforma elem egy BST-ben
+        {
+            node->count++;
             return node;
+        }
 
         /* 2. Ha szükséges, akkor kiegyensúlyozunk */
                 /* Magasság frissítése az ősben */
@@ -121,6 +125,11 @@ public:
         else if (key > root->key)
             root->right = deleteNode(root->right, key);
         else {
+            // eloszor a szamlalot csokkantjuk, ha nulla, akkor torlunk
+            if (root->count-- > 1) {
+                return root;
+            }
+            
             // egy gyerek vagy semmi
             if ((root->left == nullptr) || (root->right == nullptr)) {
                 AVLNode<T>* temp = root->left ? root->left : root->right;
@@ -130,7 +139,7 @@ public:
                     temp = root;
                     root = nullptr;
                 }
-                else // egy gyerek
+                else
                     *root = *temp;
                 delete temp;
             }

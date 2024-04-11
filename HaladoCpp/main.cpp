@@ -45,11 +45,84 @@ void loadDatesFromFile(const std::string& filename, AVLTree<Date>& nDates, std::
     std::cout << "Fájl beolvasva: " << filename << std::endl;
 }
 
+void processDatesV1(AVLTree<Date>& nDates, const std::vector<Date>& kDates) {
+    std::vector<Date>::const_iterator it = kDates.begin();
+        do {
+            // 1. keressük a legkissebb dátumot
+            Date const *nDateElem = &nDates.minValueNode(nDates.root)->key;
+            
+#ifdef DEBUG
+           std::cout << "N: " << nDateElem->getYear() << "-" << nDateElem->getMonth() << "-" << nDateElem->getDay() << std::endl;
+#endif
+
+            // 2. feldolgozzuk
+            consumer(*nDateElem);
+            // 3. töröljük a legkissebb dátumot
+            nDates.root = nDates.deleteNode(nDates.root, *nDateElem);
+            // 4. beszúrunk egyet a kDates-ből, amíg van
+            if (it != kDates.end()) {
+                nDates.root = nDates.insertNode(nDates.root, *it);
+                ++it;
+            }
+        } while (nDates.root != nullptr);
+}
+
+
+// kiserleti verzio (nem mukodik)
+void processDatesV2(AVLTree<Date>& nDates, const std::vector<Date>& kDates) {
+    // ha a kDates-bol olyan elem jon, ami kisebb mint a nDates-ben levo legkisebb elem, 
+    // akkor azt fel is hasznaljuk.
+    // Kar lenne betenni az nDates-be es onnan megint kivenni ugyanazt.
+    Date const *nDateElem = &nDates.minValueNode(nDates.root)->key;
+    std::vector<Date>::const_iterator it = kDates.begin();
+    Date const *kDateElem = nullptr;
+    
+    for(;;) {
+        // ha van kDateElem, es kisebb mint a nDateElem, akkor felhasznaljuk
+        if (kDateElem != nullptr) {
+#ifdef DEBUG
+            std::cout << "K: " << kDateElem->getYear() << "-" << kDateElem->getMonth() << "-" << kDateElem->getDay() << std::endl;
+#endif
+            consumer(*kDateElem);
+            ++it;
+            kDateElem = (*it < *nDateElem ? &*it : nullptr);            
+            continue;
+        }
+
+        // felhasnzlajuk a legkissebb nDateElem-et
+#ifdef DEBUG
+        std::cout << "N: " << nDateElem->getYear() << "-" << nDateElem->getMonth() << "-" << nDateElem->getDay() << std::endl;
+#endif
+        consumer(*nDateElem);
+        
+        // töröljük
+        nDates.root = nDates.deleteNode(nDates.root, *nDateElem);
+
+        if (nDates.root == nullptr && it == kDates.end()) {
+            break;
+        }
+
+        if (nDates.root != nullptr) {
+            nDateElem = &nDates.minValueNode(nDates.root)->key;
+        }
+
+        // teszunk a helyere egy ujat a kDates-bol (ha nem ures)
+        if (it != kDates.end()) {
+            nDates.root = nDates.insertNode(nDates.root, *it);
+            ++it;
+        }
+
+        
+
+        // vesszuk a kovetkezo legkisebb nDateElem-et
+        
+    }
+}
 
 int main(int argc, char* argv[]) {
     AVLTree<Date> nDates;
     std::vector<Date> kDates;
-
+    
     measureExecutionTime("Dátumok betöltése", [&nDates, &kDates]() {
         loadDatesFromFile("dates.txt", nDates, kDates);
     });
@@ -58,21 +131,9 @@ int main(int argc, char* argv[]) {
     std::cout << "N max: " << pow(2, nDates.height(nDates.root)) << " (" << nDates.height(nDates.root) << ")" << std::endl;
     std::cout << "K: " << kDates.size() << std::endl;
 
-    measureExecutionTime("Feldolgozás", [&nDates, &kDates]() {
-        std::vector<Date>::const_iterator it = kDates.begin();
-        do {
-            // 1. keressük a legkissebb dátumot
-            AVLNode<Date>* smallest = nDates.minValueNode(nDates.root);
-            // 2. feldolgozzuk
-            consumer(smallest->key);
-            // 3. töröljük a legkissebb dátumot
-            nDates.root = nDates.deleteNode(nDates.root, smallest->key);
-            // 4. beszúrunk egyet a kDates-ből, amíg van
-            if (it != kDates.end()) {
-                nDates.root = nDates.insertNode(nDates.root, *it);
-                ++it;
-            }
-        } while (nDates.root != nullptr);
+    measureExecutionTime("Feldolgozás", [&nDates, &kDates]() {        
+        processDatesV1(nDates, kDates);
+        //processDatesV2(nDates, kDates);
     });
 
     return 0;

@@ -45,5 +45,5 @@ clean:
 	rm -f $(GENERATOR_OBJECTS) $(MAIN_OBJECTS) $(GENERATOR_EXEC) $(MAIN_EXEC)
 
 run: prod
-	./$(GENERATOR_EXEC) 500 10000 dates.txt
+	./$(GENERATOR_EXEC) 1000000 50000000 dates.txt
 	./$(MAIN_EXEC) dates.txt
