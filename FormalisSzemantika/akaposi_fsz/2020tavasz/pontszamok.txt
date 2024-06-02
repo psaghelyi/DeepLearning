@@ -1,0 +1,8 @@
+pont jegy
+0-4  1
+5    2
+6    3
+7    4
+8-10 5
+
+zh03--zh10-ig szamitanak a kiszh-k, utolso oran opcionalis javito kiszh
